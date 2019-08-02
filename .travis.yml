@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t malexandroff1/react-test -f ./client/Dockerfile.dev .
+
+script:
+  - docker run -e CI=true malexandroff1/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t malexandroff1/multi-client ./client
+  - docker build -t malexandroff1/multi-nginx ./nginx
+  - docker build -t malexandroff1/multi-server ./server
+  - docker build -t malexandroff1/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push malexandroff1/multi-client
+  - docker push malexandroff1/multi-nginx
+  - docker push malexandroff1/multi-server
+  - docker push malexandroff1/multi-worker
