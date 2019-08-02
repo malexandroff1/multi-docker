@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  - docker build -t malexandroff1/react-test -f ./client/Dockerfile.dev .
+  - docker build -t malexandroff1/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true malexandroff1/react-test npm test -- --coverage
